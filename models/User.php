@@ -4,7 +4,7 @@
         private $conn;
 
         private $db_table = "users";
-     
+
         public $id;
         public $name;
         public $email;
@@ -13,7 +13,7 @@
         public function __construct($db){
             $this->conn = $db;
         }
-        // GET ALL
+        
         public function getAllUsers(){
             global $pdo;
             $sqlQuery = "SELECT id, name, email , created_at  FROM " . $this->db_table . "";
@@ -21,28 +21,25 @@
             $stmt->execute();
             return $stmt;
         }
-        // CREATE
+        
         public function create(){
             $sqlQuery = "INSERT INTO
-                        ". $this->db_table ."
-                    SET
-                        name = :name, 
-                        email = :email" 
-                       
-                        ;
-        
-            $stmt = $this->conn->prepare($sqlQuery);
-        
-            // sanitize
-                $this->name=htmlspecialchars(strip_tags($this->name));
-                $this->email=htmlspecialchars(strip_tags($this->email));
-                //$this->created=htmlspecialchars(strip_tags($this->created));
-            
-                // bind data
-                $stmt->bindParam(":name", $this->name);
-                $stmt->bindParam(":email", $this->email);
-          //  $stmt->bindParam(":created", $this->created);
-        
+                    ". $this->db_table ."
+                SET
+                    name = :name, 
+                    email = :email" 
+                   
+                    ;
+    
+        $stmt = $this->conn->prepare($sqlQuery);
+    
+    
+         
+       
+            $stmt->bindParam(":name", $this->name);
+            $stmt->bindParam(":email", $this->email);
+     
+    
             if($stmt->execute()){
                return true;
             }
@@ -85,36 +82,53 @@
         
             $stmt = $this->conn->prepare($sqlQuery);
         
-            $this->name=htmlspecialchars(strip_tags($this->name));
-            $this->email=htmlspecialchars(strip_tags($this->email));
+           
      
-         //   $this->created=htmlspecialchars(strip_tags($this->created));
-            $this->id=htmlspecialchars(strip_tags($this->id));
+     
+            //$this->id=htmlspecialchars(strip_tags($this->id));
         
-            // bind data
+    
             $stmt->bindParam(":name", $this->name);
             $stmt->bindParam(":email", $this->email);
            
-          //  $stmt->bindParam(":created", $this->created);
+      
             $stmt->bindParam(":id", $this->id);
         
-            if($stmt->execute()){
-               return true;
+            $stmt->execute();
+            $count = $stmt->rowCount();
+            // check affected rows using rowCount
+            if ($count > 0) {
+                echo 'Success - The record for has been updated.';
+                return true;
+            } else {
+                
+                
+                return false;
             }
+        
+            
             return false;
         }
-        // DELETE
+       
         function delete(){
-            $sqlQuery = "DELETE FROM " . $this->db_table . " WHERE id = ?";
+            $sqlQuery = "DELETE FROM " . $this->db_table . " WHERE id = :id";
             $stmt = $this->conn->prepare($sqlQuery);
         
-            $this->id=htmlspecialchars(strip_tags($this->id));
+            
         
-            $stmt->bindParam(1, $this->id);
-        
-            if($stmt->execute()){
-                return true;
-            }
+            $stmt->bindParam(":id", $this->id);
+            $stmt->execute();
+            $count = $stmt->rowCount();
+                // check affected rows using rowCount
+                if ($count > 0) {
+                    echo 'Success - The record for has been deleted.';
+                    return true;
+                } else {
+                    
+                    return false;
+                }
+            
+
             return false;
         }
     }

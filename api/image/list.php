@@ -8,44 +8,54 @@
  $database = new Database();
  $db = $database->getConnection();
 
-  // Instantiate blog post object
-  $post = new Image($db);
 
-  // Blog post query
-  $result = $post->read();
-  // Get row count
+  $image = new Image($db);
+
+
+if ($_SERVER["REQUEST_METHOD"] == "GET"){
+
+  $result = $image->read();
+
   $num = $result->rowCount();
 
-  // Check if any posts
+
   if($num > 0) {
-    // Post array
-    $posts_arr = array();
-    // $posts_arr['data'] = array();
+
+    $images_arr = array();
+
 
     while($row = $result->fetch(PDO::FETCH_ASSOC)) {
       extract($row);
 
-      $post_item = array(
+      $image_item = array(
         'id' => $id,
         'img' => $img,
-      
         'user_id' => $user_id,
         'user_name' => $user_name,
         'created_at' => $created_at
       );
 
-      // Push to "data"
-      array_push($posts_arr, $post_item);
-      // array_push($posts_arr['data'], $post_item);
+      array_push($images_arr, $image_item);
+      
     }
 
-    // Turn to JSON & output
-    echo json_encode($posts_arr);
+    http_response_code(200);
+    echo json_encode($images_arr);
 
-  } else {
-    // No Posts
+  } 
+  else {
    
-        http_response_code(404);
-    
+   http_response_code(404);
+   echo json_encode(
+    array("message" => "No record found.")
+      );
+  
+  }
+}
+  else
+  {
+    http_response_code(405);
+    echo json_encode( array("message" => "Method not allowed"));
+
   }
   ?>

@@ -14,138 +14,66 @@
  $db = $database->getConnection();
 
 
-$post = new Image($db);
+$image = new Image($db);
+if ($_SERVER["REQUEST_METHOD"] == "POST"){
+$image->user_id = $_POST['user_id'];
+$image->created_at = date('Y');
 
-$post->user_id = $_POST['user_id'];
-$post->created_at = date('Y');
 
 
+$img_name=$_FILES['img']['name'];
+$fileExt = strtolower(pathinfo($img_name,PATHINFO_EXTENSION)); 
 
-//   $data = json_decode(file_get_contents('php://input'), true);
+$valid_extensions = array('jpeg', 'jpg', 'png', 'gif'); 
 
-//   $post->img= $data->img;
-//   $post->user_id = $data->user_id;
-//  ;
-//$post->img = $_POST['img'];
-//chdir("/home");
-//$currentDirectory = getcwd();
+if(in_array($fileExt, $valid_extensions))
+{
 
-$upload_path = `/var/www/html/task/uploads/$post->created_at`;
+$upload_path = dirname(__FILE__) . "//uploads//$image->created_at//";
 
 $tempPath  =  $_FILES['img']['tmp_name'];
 
-$img=$_FILES['img']['name'];  
-$uploadDirectory = "/uploads/$post->created_at/";
-$uploadPath = $tempPath . $upload_path . $img;
+$img= (floor(microtime(true)) + 1) . "_" . $_FILES['img']['name'];
 
+if (!is_dir($upload_path)) {
+  mkdir($upload_path, 0777, true);
 
+}
 
-
-
-$fileExt = strtolower(pathinfo($img,PATHINFO_EXTENSION)); 
-$valid_extensions = array('jpeg', 'jpg', 'png', 'gif'); 
-					
-        
-
-$post->img=$img;            
-
+$uploadPath = $upload_path . $img;
+$image->img=$img; 
 
 move_uploaded_file($tempPath, $uploadPath);
 
+}
+else{
+  $errorMsg = json_encode(array("message" => "Sorry, only JPG, JPEG, PNG & GIF files are allowed"));	
+		
+}
 
 
-  // Create post
-  if($post->create()) {
+  if($image->create()) {
+    http_response_code(200);
     echo json_encode(
-      array('message' => 'Post Created')
+    
+      array('message' => 'Image Added')
     );
-  } else {
-    echo json_encode(
-      array('message' => 'Post Not Created')
-    );
+  }  else{
+    
+    http_response_code(422);
+    array('message' => 'unprocessable content');
+
   }
 
-
+}
+else {
+  http_response_code(405);
+  array('message' => 'method not allowed');
+  
+}
 
 
 ?>
 
 
 
-
-// Get raw posted data
-//   $data = json_decode(file_get_contents('php://input'), true);
-
-//   $post->img= $data->img;
-//   $post->user_id = $data->user_id;
-//  ;
-//$post->img = $_POST['img'];
-
-
-//$upload_path = `/var/www/html/task/uploads/$post->created_at/`;
-
-
-// header("Content-Type: application/json");
-// header("Acess-Control-Allow-Origin: *");
-// header("Acess-Control-Allow-Methods: POST");
-// header("Acess-Control-Allow-Headers: Acess-Control-Allow-Headers,Content-Type,Acess-Control-Allow-Methods, Authorization");
-
-// include 'dbconfig.php'; // include database connection file
-
-// $data = json_decode(file_get_contents("php://input"), true); // collect input parameters and convert into readable format
-	
-// $fileName  =  $_FILES['sendimage']['name'];
-// $tempPath  =  $_FILES['sendimage']['tmp_name'];
-// $fileSize  =  $_FILES['sendimage']['size'];
-		
-// if(empty($fileName))
-// {
-// 	$errorMSG = json_encode(array("message" => "please select image", "status" => false));	
-// 	echo $errorMSG;
-// }
-// else
-// {
-// 	$upload_path = 'upload/'; // set upload folder path 
-	
-// 	$fileExt = strtolower(pathinfo($fileName,PATHINFO_EXTENSION)); // get image extension
-		
-// 	// valid image extensions
-// 	$valid_extensions = array('jpeg', 'jpg', 'png', 'gif'); 
-					
-// 	// allow valid image file formats
-// 	if(in_array($fileExt, $valid_extensions))
-// 	{				
-// 		//check file not exist our upload folder path
-// 		if(!file_exists($upload_path . $fileName))
-// 		{
-// 			// check file size '5MB'
-// 			if($fileSize < 5000000){
-// 				move_uploaded_file($tempPath, $upload_path . $fileName); // move file from system temporary path to our upload folder path 
-// 			}
-// 			else{		
-// 				$errorMSG = json_encode(array("message" => "Sorry, your file is too large, please upload 5 MB size", "status" => false));	
-// 				echo $errorMSG;
-// 			}
-// 		}
-// 		else
-// 		{		
-// 			$errorMSG = json_encode(array("message" => "Sorry, file already exists check upload folder", "status" => false));	
-// 			echo $errorMSG;
-// 		}
-// 	}
-// 	else
-// 	{		
-// 		$errorMSG = json_encode(array("message" => "Sorry, only JPG, JPEG, PNG & GIF files are allowed", "status" => false));	
-// 		echo $errorMSG;		
-// 	}
-// }
-		
-// // if no error caused, continue ....
-// if(!isset($errorMSG))
-// {
-// 	$query = mysqli_query($conn,'INSERT into tbl_image (name) VALUES("'.$fileName.'")');
-			
-// 	echo json_encode(array("message" => "Image Uploaded Successfully", "status" => true));	
-// }
-
-?> -->

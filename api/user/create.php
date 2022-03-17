@@ -1,11 +1,11 @@
 <?php
-    header("Access-Control-Allow-Origin: *");
-    header("Content-Type: application/json");
-    header("Access-Control-Allow-Methods: POST");
-    header("Access-Control-Max-Age: 3600");
-    header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-    include_once '../../config/database.php';
-    include_once '../../models/User.php';
+  header("Access-Control-Allow-Origin: *");
+  header("Content-Type: application/json");
+  header("Access-Control-Allow-Methods: POST");
+  header("Access-Control-Max-Age: 3600");
+  header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+  include_once '../../config/database.php';
+  include_once '../../models/User.php';
 
 
  $database = new Database();
@@ -20,16 +20,17 @@
 
   $error_array=[];
 
- if(strlen(validation($data->name)) < 3)
+ if(strlen(validation($data->name)) < 3 ||  (is_int($data->name)))
   {
-    $error_array["name"]="name must be more than 3";
-    var_dump($error_array);
+    $error_array["name"]="name is invalid";
+   
    
   }
 
-  if(strlen(validation($data->email))<5)
+
+ if(strlen(validation($data->email))<5 ||  (is_int($data->email)))
   {
-    $error_array["email"]="email must be more than 5";
+    $error_array["email"]="email is inavlid";
 
   }
   
@@ -37,28 +38,31 @@
     $item->name = validation($data->name);
     $item->email = validation($data->email);
     $item->created = date('Y-m-d H:i:s');
+
     if($item->create()){
-        echo 'Employee created successfully.';
-    } else{
-        echo 'Employee could not be created.';
-    }
+      http_response_code(200);
+       echo 'user created successfully.';
+        
+    } 
  
-}
+ }
+
   else{
-
-
-var_dump( $error_array);
+    
+    http_response_code(422);
    
+    $err = array_values($error_array);
+     echo json_encode($err);
+
   }
    
 }
 else 
 {
     http_response_code(405);
-    echo "method not allow";
+    echo json_encode( array("message" => "Method not allowed"));
 }
     
- 
 
   function validation($data)
   {

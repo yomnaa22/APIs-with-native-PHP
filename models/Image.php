@@ -66,31 +66,38 @@ class Image {
     return false;
   }
   public function update() {
-    // Create query
+  
     $query = 'UPDATE ' . $this->table . '
      SET img = :img, user_id = :user_id
      WHERE id = :id';
 
-    // Prepare statement
+   
     $stmt = $this->conn->prepare($query);
 
-    // Clean data
+    
     $this->img = htmlspecialchars(strip_tags($this->img));
    
     $this->user_id = htmlspecialchars(strip_tags($this->user_id));
     $this->id = htmlspecialchars(strip_tags($this->id));
 
-    // Bind data
+    
     $stmt->bindParam(':img', $this->img);
     $stmt->bindParam(':user_id', $this->user_id);
     $stmt->bindParam(':id', $this->id);
 
-    // Execute query
-    if($stmt->execute()) {
-      return true;
-    }
+    $stmt->execute();
+    $count = $stmt->rowCount();
+           
+            if ($count > 0) {
+                echo 'Success - The record for has been updated.';
+                return true;
+            } else {
+                
+                echo 'noupdate';
+                return false;
+            }
 
-    // Print error if something goes wrong
+   
     printf("Error: %s.\n", $stmt->error);
 
     return false;

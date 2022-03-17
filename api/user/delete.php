@@ -15,12 +15,25 @@
     $item = new User($db);
     
     $data = json_decode(file_get_contents("php://input"));
-    
+    if ($_SERVER["REQUEST_METHOD"] == "DELETE"){
+      
     $item->id = $data->id;
+  
     
     if($item->delete()){
-        echo json_encode("Employee deleted.");
+        
+        echo json_encode("User deleted.");
+    
     } else{
-        echo json_encode("Data could not be deleted");
+
+        http_response_code(404);
+        
+        echo  json_encode( array("message" => "user not found"));
     }
+}
+else {
+
+    http_response_code(405);
+    echo json_encode(array("message" => "method not allowed"));
+}
 ?>

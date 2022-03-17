@@ -12,22 +12,29 @@
   $database = new Database();
   $db = $database->getConnection();
 
-  // Instantiate blog post object
-  $post = new Image($db);
 
-  // Get raw posted data
+  $img = new Image($db);
+
+ 
   $data = json_decode(file_get_contents("php://input"));
 
-  // Set ID to update
-  $post->id = $data->id;
+  if ($_SERVER["REQUEST_METHOD"] == "DELETE"){
+  $img->id = $data->id;
 
-  // Delete post
-  if($post->delete()) {
+  
+  if($img->delete()) {
     echo json_encode(
-      array('message' => 'Post Deleted')
+      array('message' => 'Image Deleted')
     );
   } else {
+    http_response_code(404);
     echo json_encode(
-      array('message' => 'Post Not Deleted')
+      array('message' => 'Image Not Deleted')
     );
-  }
+  }}
+
+else {
+
+  http_response_code(405);
+  echo "method not allow";
+}
