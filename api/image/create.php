@@ -1,79 +1,94 @@
-<?php 
-  // Headers
-  header('Access-Control-Allow-Origin: *');
-  header('Content-Type: application/json');
-  header('Access-Control-Allow-Methods: POST');
-  header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods, Authorization, X-Requested-With');
-
-  
-  include_once '../../config/database.php';
-  include_once '../../models/Image.php';
-
- 
- $database = new Database();
- $db = $database->getConnection();
+<?php
+// Headers
+header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json');
+header('Access-Control-Allow-Methods: POST');
+header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods, Authorization, X-Requested-With');
 
 
-$image = new Image($db);
-if ($_SERVER["REQUEST_METHOD"] == "POST"){
-$image->user_id = $_POST['user_id'];
-$image->created_at = date('Y');
+include_once '../../config/database.php';
+include_once '../../models/Image.php';
+include_once '../../models/User.php';
 
 
 
-$img_name=$_FILES['img']['name'];
-$fileExt = strtolower(pathinfo($img_name,PATHINFO_EXTENSION)); 
+$database = new Database();
+$db = $database->getConnection();
+$items = new User($db);
 
-$valid_extensions = array('jpeg', 'jpg', 'png', 'gif'); 
+if ($_SERVER["REQUEST_METHOD"] != "POST") {
 
-if(in_array($fileExt, $valid_extensions))
-{
-
-$upload_path = dirname(__FILE__) . "//uploads//$image->created_at//";
-
-$tempPath  =  $_FILES['img']['tmp_name'];
-
-$img= (floor(microtime(true)) + 1) . "_" . $_FILES['img']['name'];
-
-if (!is_dir($upload_path)) {
-  mkdir($upload_path, 0777, true);
-
-}
-
-$uploadPath = $upload_path . $img;
-$image->img=$img; 
-
-move_uploaded_file($tempPath, $uploadPath);
-
-}
-else{
-  $errorMsg = json_encode(array("message" => "Sorry, only JPG, JPEG, PNG & GIF files are allowed"));	
-		
-}
-
-
-  if($image->create()) {
-    http_response_code(200);
-    echo json_encode(
-    
-      array('message' => 'Image Added')
-    );
-  }  else{
-    
-    http_response_code(422);
-    array('message' => 'unprocessable content');
-
-  }
-
-}
-else {
   http_response_code(405);
   array('message' => 'method not allowed');
+ 
+} else {
+
+
+
+ 
+$stmt=$items->getLast();
+
+$Num = $stmt->fetch(PDO::FETCH_ASSOC);
+$last_inserted_id = $Num['max_id'];
+
+echo $last_inserted_id;
+ // $img_name = $_FILES['img']['name'];
+  $img_name = count($_FILES['img']['name']);
+
+
+  $valid_extensions = array('jpeg', 'jpg', 'png', 'gif');
+  for($i=0;$i<$img_name ;$i++){
+
+
+    $image = new Image($db);
+ 
+  
+  $image->created_at = date('Y');
+
+  $image->user_id = $Num['max_id'];
+
+    $img = (floor(microtime(true)) + 1) . "_" . $_FILES['img']['name'][$i];
+
+    $fileExt = strtolower(pathinfo($img, PATHINFO_EXTENSION));
+
+    $tempPath  =  $_FILES['img']['tmp_name'][$i];
+
+    
+    $upload_path = dirname(__FILE__) . "//uploads//$image->created_at//$last_inserted_id//";
+
+  if (in_array($fileExt, $valid_extensions)) {
+
+    
+ 
+
+
+    if (!is_dir($upload_path)) {
+      mkdir($upload_path, 0777, true);
+    }
+
+    $uploadPath = $upload_path . $img;
+    $image->img = $img;
+
+    move_uploaded_file($tempPath, $uploadPath);
+  } else {
+    $errorMsg = json_encode(array("message" => "Sorry, only JPG, JPEG, PNG & GIF files are allowed"));
+  }
+
+  if ($image->create()) {
+    http_response_code(200);
+    echo json_encode(
+
+      array('message' => 'Image Added')
+    );
+  } else {
+
+    http_response_code(422);
+    array('message' => 'unprocessable content');
+  }
+
+  }
   
 }
 
 
 ?>
-
-
-

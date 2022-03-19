@@ -15,8 +15,15 @@
     $item = new User($db);
     
     $data = json_decode(file_get_contents("php://input"));
-    if ($_SERVER["REQUEST_METHOD"] == "DELETE"){
-      
+    if ($_SERVER["REQUEST_METHOD"] != "DELETE"){
+        
+        http_response_code(405);
+        echo json_encode(array("message" => "method not allowed"));
+
+}
+else {
+
+
     $item->id = $data->id;
   
     
@@ -30,10 +37,5 @@
         
         echo  json_encode( array("message" => "user not found"));
     }
-}
-else {
-
-    http_response_code(405);
-    echo json_encode(array("message" => "method not allowed"));
 }
 ?>

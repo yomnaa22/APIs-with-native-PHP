@@ -1,40 +1,41 @@
-<?php 
-  // Headers
-  header('Access-Control-Allow-Origin: *');
-  header('Content-Type: application/json');
-  header('Access-Control-Allow-Methods: DELETE');
-  header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods, Authorization, X-Requested-With');
+<?php
+// Headers
+header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json');
+header('Access-Control-Allow-Methods: DELETE');
+header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods, Authorization, X-Requested-With');
 
-  include_once '../../config/database.php';
-  include_once '../../models/Image.php';
-
-  
-  $database = new Database();
-  $db = $database->getConnection();
+include_once '../../config/database.php';
+include_once '../../models/Image.php';
 
 
-  $img = new Image($db);
+$database = new Database();
+$db = $database->getConnection();
 
- 
-  $data = json_decode(file_get_contents("php://input"));
 
-  if ($_SERVER["REQUEST_METHOD"] == "DELETE"){
+$img = new Image($db);
+
+
+$data = json_decode(file_get_contents("php://input"));
+
+if ($_SERVER["REQUEST_METHOD"] != "DELETE") {
+  http_response_code(405);
+  echo "method not allow";
+} else {
+
+
   $img->id = $data->id;
 
-  
-  if($img->delete()) {
+  if ($img->delete()) {
+    http_response_code(200);
+
     echo json_encode(
       array('message' => 'Image Deleted')
     );
   } else {
     http_response_code(404);
     echo json_encode(
-      array('message' => 'Image Not Deleted')
+      array('message' => 'Image Not found')
     );
-  }}
-
-else {
-
-  http_response_code(405);
-  echo "method not allow";
+  }
 }

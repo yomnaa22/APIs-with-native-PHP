@@ -1,23 +1,22 @@
 <?php
 class Image {
-    // DB stuff
+ 
     private $conn;
     private $table = 'images';
 
-    // Post Properties
     public $id;
     public $user_id;
     public $user_name;
     public $created_at;
 
-    // Constructor with DB
+    
     public function __construct($db) {
       $this->conn = $db;
     }
 
-    // Get Posts
+   
     public function read() {
-      // Create query
+  
       $query = 'SELECT u.name as user_name, i.id, i.img, i.user_id, i.created_at
                                 FROM ' . $this->table . ' i
                                 LEFT JOIN
@@ -25,46 +24,32 @@ class Image {
                                 ORDER BY
                                   i.created_at DESC';
       
-      // Prepare statement
+    
       $stmt = $this->conn->prepare($query);
-
-      // Execute query
       $stmt->execute();
-
       return $stmt;
     }
     public function create() {
 
+        $query = 'INSERT INTO ' . $this->table . " SET img = :img, user_id = :user_id";
 
-
-
-        // Create query
-        $query = 'INSERT INTO ' . $this->table . ' SET img = :img, user_id = :user_id';
-
-        // Prepare statement
         $stmt = $this->conn->prepare($query);
-
-        // Clean data
-        $this->img = htmlspecialchars(strip_tags($this->img));
-         $this->user_id = $this->user_id;
+        
      
         
         $stmt->bindParam(':img', $this->img);
         $stmt->bindParam(':user_id', $this->user_id);
         
-
-     
-
-        // Execute query
         if($stmt->execute()) {
           return true;
     }
 
-    // Print error if something goes wrong
-    printf("Error: %s.\n", $stmt->error);
-
     return false;
   }
+  
+
+
+
   public function update() {
   
     $query = 'UPDATE ' . $this->table . '
@@ -103,27 +88,27 @@ class Image {
     return false;
 }
 public function delete() {
-    // Create query
-    $query = 'DELETE FROM ' . $this->table . ' WHERE id = :id';
+  // Create query
+  $query = 'DELETE FROM ' . $this->table . ' WHERE id = :id';
 
-  
-    $stmt = $this->conn->prepare($query);
 
-    // Clean data
-    $this->id = htmlspecialchars(strip_tags($this->id));
+  $stmt = $this->conn->prepare($query);
 
-    // Bind data
-    $stmt->bindParam(':id', $this->id);
+  // Clean data
+  $this->id = htmlspecialchars(strip_tags($this->id));
 
-    // Execute query
-    if($stmt->execute()) {
-      return true;
-    }
+  // Bind data
+  $stmt->bindParam(':id', $this->id);
 
-    // Print error if something goes wrong
-    printf("Error: %s.\n", $stmt->error);
+  // Execute query
+  if($stmt->execute()) {
+    return true;
+  }
 
-    return false;
+  // Print error if something goes wrong
+  printf("Error: %s.\n", $stmt->error);
+
+  return false;
 }
 }
 
