@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] != "POST") {
 
   $image->created_at = date('Y');
 
-
+  $image->created_at_month = date('M');
 
   $img_name = $_FILES['img']['name'];
   $fileExt = strtolower(pathinfo($img_name, PATHINFO_EXTENSION));
@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] != "POST") {
 
   if (in_array($fileExt, $valid_extensions)) {
 
-    $upload_path = dirname(__FILE__) . "//uploads//$image->created_at//$image->user_id//";
+    $upload_path = dirname(__FILE__) . "//uploads//$image->created_at//$image->created_at_month//$image->user_id//";
 
     $tempPath  =  $_FILES['img']['tmp_name'];
 

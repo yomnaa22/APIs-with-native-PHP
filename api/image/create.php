@@ -44,6 +44,8 @@ echo $last_inserted_id;
  
   
   $image->created_at = date('Y');
+  $image->created_at_month = date('M');
+
 
   $image->user_id = $Num['max_id'];
 
@@ -54,7 +56,7 @@ echo $last_inserted_id;
     $tempPath  =  $_FILES['img']['tmp_name'][$i];
 
     
-    $upload_path = dirname(__FILE__) . "//uploads//$image->created_at//$last_inserted_id//";
+    $upload_path = dirname(__FILE__) . "//uploads//$image->created_at//$image->created_at_month//$last_inserted_id//";
 
   if (in_array($fileExt, $valid_extensions)) {
 

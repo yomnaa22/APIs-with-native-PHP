@@ -8,6 +8,9 @@ class Image {
     public $user_id;
     public $user_name;
     public $created_at;
+    public $created_at_month;
+
+
 
     
     public function __construct($db) {

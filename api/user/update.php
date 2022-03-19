@@ -14,7 +14,7 @@
     
     $data = json_decode(file_get_contents("php://input"));
 
- if ($_SERVER["REQUEST_METHOD"] == "PUT"){
+    if ($_SERVER["REQUEST_METHOD"] != "PUT"){
 
   http_response_code(405);
   echo json_encode( array("error" => "Method not allowed"));
@@ -34,7 +34,7 @@
     }
 
     $sanitizedEmail = filter_var($data->email, FILTER_SANITIZE_EMAIL);
-    
+
     if($data->email != $sanitizedEmail || !filter_var($data->email, FILTER_VALIDATE_EMAIL))
     {
       $error_array["email"]="email is inavlid";

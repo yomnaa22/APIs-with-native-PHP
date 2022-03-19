@@ -52,7 +52,7 @@ else
         $item->name = validation($data->name);
         $item->email = validation($data->email);
         $item->created = date('Y-m-d H:i:s');
-    
+                    
         if($item->create()){
           http_response_code(200);
           echo json_encode( array("message" => "user added successfully"));
