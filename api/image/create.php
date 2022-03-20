@@ -24,15 +24,19 @@ if ($_SERVER["REQUEST_METHOD"] != "POST") {
 } else {
 
 
-
  
 $stmt=$items->getLast();
 
 $Num = $stmt->fetch(PDO::FETCH_ASSOC);
+if (isset($_POST['user_id']))
+{
+  $last_inserted_id=$_POST['user_id'];
+}
+else{
 $last_inserted_id = $Num['max_id'];
+}
+//echo $last_inserted_id;
 
-echo $last_inserted_id;
- // $img_name = $_FILES['img']['name'];
   $img_name = count($_FILES['img']['name']);
 
 
