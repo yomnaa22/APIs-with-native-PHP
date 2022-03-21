@@ -1,5 +1,5 @@
 <?php
-// Headers
+
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: POST');
@@ -31,6 +31,7 @@ $Num = $stmt->fetch(PDO::FETCH_ASSOC);
 if (isset($_POST['user_id']))
 {
   $last_inserted_id=$_POST['user_id'];
+ 
 }
 else{
 $last_inserted_id = $Num['max_id'];
@@ -41,6 +42,7 @@ $last_inserted_id = $Num['max_id'];
 
 
   $valid_extensions = array('jpeg', 'jpg', 'png', 'gif');
+
   for($i=0;$i<$img_name ;$i++){
 
 
@@ -51,7 +53,7 @@ $last_inserted_id = $Num['max_id'];
   $image->created_at_month = date('M');
 
 
-  $image->user_id = $Num['max_id'];
+  $image->user_id = $last_inserted_id;
 
     $img = (floor(microtime(true)) + 1) . "_" . $_FILES['img']['name'][$i];
 

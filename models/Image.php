@@ -70,6 +70,7 @@ class Image {
 
     
     $stmt->bindParam(':img', $this->img);
+    
     $stmt->bindParam(':user_id', $this->user_id);
     $stmt->bindParam(':id', $this->id);
 

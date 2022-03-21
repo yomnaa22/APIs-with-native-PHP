@@ -19,7 +19,12 @@ if ($_SERVER["REQUEST_METHOD"] != "POST") {
   array('message' => 'method not allowed');
 } else {
 
-  $image->user_id = $_POST['user_id'];
+  if(!empty(isset($_POST['user_id'])))
+  {
+    $image->user_id = $_POST['user_id'];
+  }
+  
+ 
   $image->id = $_POST['id'];
 
   $image->created_at = date('Y');
