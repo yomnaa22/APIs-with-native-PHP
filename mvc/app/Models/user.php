@@ -44,6 +44,39 @@ class user extends database{
     }
 
     
+
+    public function update(){
+        $sqlQuery = "UPDATE
+                    ". $this->table ."
+                SET
+                    name = :name, 
+                    email = :email
+           
+                   
+                WHERE 
+                id = :id";
+    
+        $stmt = $this->connect()->prepare($sqlQuery);
+    
+        $stmt->bindParam(":name", $this->name);
+        $stmt->bindParam(":email", $this->email);
+        $stmt->bindParam(":id", $this->id);
+    
+        $stmt->execute();
+        $count = $stmt->rowCount();
+      
+        if ($count > 0) {
+            
+            return true;
+        } else {
+            
+            
+            return false;
+        }
+    
+        
+        return false;
+    }
 }
 
 
