@@ -100,6 +100,15 @@ class user extends database{
 
         return false;
         }
+        function getLast()
+
+        {  
+             global $pdo;
+            $sqlQuery = "SELECT MAX(id) AS max_id FROM " . $this->table . "";
+            $stmt = $this->connect()->prepare($sqlQuery);
+            $stmt->execute();
+            return $stmt;
+        }
 }
 
 
