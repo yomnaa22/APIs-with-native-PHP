@@ -88,8 +88,8 @@ class imagecontroller
 
 
                 $image->created_at = date('Y');
-                $image->created_at_month = date('M');
-                $image->created_at_day = date('D');
+                $image->created_at_month = date('m');
+                $image->created_at_day = date('d');
 
 
                 $image->user_id = $last_inserted_id;
@@ -158,10 +158,10 @@ if ($_SERVER["REQUEST_METHOD"] != "POST") {
  
   $image->id = $_POST['id'];
 
-  $image->created_at = date('Y');
+  $image->created_at = date('y');
 
-  $image->created_at_month = date('M');
-  $image->created_at_day = date('D');
+  $image->created_at_month = date('m');
+  $image->created_at_day = date('d');
 
 
 
