@@ -77,6 +77,29 @@ class user extends database{
         
         return false;
     }
+
+
+    function delete(){
+        $sqlQuery = "DELETE FROM " . $this->table . " WHERE id = :id";
+        $stmt = $this->connect()->prepare($sqlQuery);
+    
+        $stmt->bindParam(":id", $this->id);
+
+        $stmt->execute();
+
+        $count = $stmt->rowCount();
+           
+            if ($count > 0) {
+                
+                return true;
+            } else {
+                
+                return false;
+            }
+        
+
+        return false;
+        }
 }
 
 
