@@ -17,6 +17,33 @@ class user extends database{
         return $stmt;
       
     }
+  
+          
+    public function create(){
+        $sqlQuery = "INSERT INTO
+                ". $this->db_table ."
+            SET
+                name = :name, 
+                email = :email" 
+               
+                ;
+
+        $stmt = $this->connect()->prepare($sqlQuery);
+        $stmt->bindParam(":name", $this->name);
+        $stmt->bindParam(":email", $this->email);
+ 
+
+        if($stmt->execute()){
+       
+           return true;
+         
+      
+
+        }
+        return false;
+    }
+
+    
 }
 
 
