@@ -6,7 +6,7 @@ class user extends database{
 
     public function __construct()
     {
-        var_dump($this->connect());
+       // var_dump($this->connect());
         
     }
     public function getAllUsers(){
@@ -21,7 +21,7 @@ class user extends database{
           
     public function create(){
         $sqlQuery = "INSERT INTO
-                ". $this->db_table ."
+                ". $this->table ."
             SET
                 name = :name, 
                 email = :email" 
