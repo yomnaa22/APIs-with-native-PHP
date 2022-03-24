@@ -187,8 +187,7 @@ else {
     
     if($item->delete()){
 
-
-        echo json_encode("User deleted.");
+  echo json_encode("User deleted.");
     
     } else{
 
