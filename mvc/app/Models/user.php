@@ -62,29 +62,33 @@ public function check_email(){
 
 
 public function check_login(){
-    $sqlQuery = "SELECT * from ".$this->table." WHERE email = :email AND password = :password";
+    $sqlQuery = "SELECT * from ".$this->table." WHERE email = :email";
+
 
     $stmt = $this->connect()->prepare($sqlQuery);
     
   
     $stmt->bindParam(":email", $this->email);
-    $stmt->bindParam(":password", $this->password);
+    //$stmt->bindParam(":password", $this->password);
 
 
 
     $stmt->execute();
-    $count = $stmt->rowCount();
+   
+    
+  
       
-    if ($count > 0) {
-        
-        return true;
+    if ( $row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+      
+        return $row;
+
     } else {
         
-        
+       
         return false;
     }
 
-    return $stmt;
+    return false;
 
 }
 

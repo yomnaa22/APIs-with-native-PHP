@@ -178,7 +178,7 @@ class JWT
     public static function encode(
         array $payload,
         $key,
-        string $alg,
+        string $alg= 'HS256',
         string $keyId = null,
         array $head = null
     ): string {

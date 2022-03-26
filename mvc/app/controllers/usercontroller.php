@@ -1,4 +1,8 @@
 <?php
+
+require '/var/www/html/curd-mvc/mvc/vendor/autoload.php';
+//require '../../vendor/autoload.php';
+use \Firebase\JWT\JWT;
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 header("Access-Control-Allow-Methods: POST");
@@ -121,7 +125,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
  }
 public function login()
 {
-    $item = new user();
+    $db = new user();
     $data = json_decode(file_get_contents("php://input"));
     if ($_SERVER["REQUEST_METHOD"] != "POST"){
    
@@ -131,19 +135,53 @@ public function login()
       else 
       {
        
-        $item->email = $data->email;
+        $db->email = $data->email;
       
-      //  $item->password = $data->password;
+     
+        $stmt = $db->check_login();
 
-        $stmt = $item->check_login();
-
-            if($item->check_login())  {
-        
+ 
+       
+            if($db->check_login())  {
+       
                
                 $password=$stmt['password'];
+              
                 if(password_verify($data->password, $password)){
+                  
+                        $iss="localhost";
+                        $iat=time();
+                        $nbf=$iat + 10;
+                        $exp= $iat + 30;
+                        $aud = "users";
+                        $user_arr_data = array(
+                            "id"=> $stmt['id'],
+                            "name"=> $stmt['name'],
+                            "email"=> $stmt['email']
+                        );
+
+                       $secret_key="owt125";
+
+                        $payload_info=array(
+                            "iss"=>$iss,
+                            "iat"=>$iat,
+                            "nbf"=>$nbf,
+                            "exp"=>$exp,
+                            "aud"=>$aud,
+                            "data"=> $user_arr_data
+                        );
+                        
+                    
+
+                  $jwt=JWT::encode($payload_info, $secret_key);
                     http_response_code(200);
-          echo json_encode( array("message" => "user is logged in succesffuly"));
+                 echo json_encode( array("message" => "user is logged in succesffuly",
+                "token" => $jwt));
+                }
+                else
+                {
+                    http_response_code(500);
+                    echo json_encode( array("message" => "wrong password"));
                 }
             }
             else {
@@ -153,7 +191,7 @@ public function login()
     
             
         
-     }
+    }
 
       }
 
