@@ -1,4 +1,10 @@
 <?php
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json");
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Max-Age: 3600");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+
  class usercontroller {
      
     public function index ()
@@ -53,7 +59,13 @@
    }
    else 
    {
-     
+     if(empty($data->name) || empty($data->email))
+     {
+        http_response_code(500);
+        echo json_encode( array("message" => "Please fill all required data"));
+     }
+     else {
+
        $error_array=[];
    
        if(strlen(validation($data->name)) < 3 ||   (preg_match('~[0-9]+~', $data->name))==1)
@@ -82,22 +94,71 @@
            $item->name = validation($data->name);
            $item->email = validation($data->email);
            $item->created = date('Y-m-d H:i:s');
-                       
+           $item->password = password_hash($data->password, PASSWORD_DEFAULT);
+
+           $stmt = $item->check_email();
+
+               if($row = $stmt->fetch(PDO::FETCH_ASSOC))  {
+                   http_response_code(422);
+             echo json_encode( array("message" => "email already exists"));
+
+               }
+               else {
            if($item->create()){
              http_response_code(200);
              echo json_encode( array("message" => "user added successfully"));
        
                
            } 
-      
         }
+        }
+     }
          
    }
 
 
  
  }
+public function login()
+{
+    $item = new user();
+    $data = json_decode(file_get_contents("php://input"));
+    if ($_SERVER["REQUEST_METHOD"] != "POST"){
+   
+        http_response_code(405);
+          echo json_encode( array("message" => "Method not allowed"));
+      }
+      else 
+      {
+       
+        $item->email = $data->email;
+      
+      //  $item->password = $data->password;
 
+        $stmt = $item->check_login();
+
+            if($item->check_login())  {
+        
+               
+                $password=$stmt['password'];
+                if(password_verify($data->password, $password)){
+                    http_response_code(200);
+          echo json_encode( array("message" => "user is logged in succesffuly"));
+                }
+            }
+            else {
+       
+          http_response_code(404);
+          echo json_encode( array("message" => "user you are trying to login doesnot exist"));
+    
+            
+        
+     }
+
+      }
+
+   
+}
 
 public function update()
 {

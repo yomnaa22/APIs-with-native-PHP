@@ -24,13 +24,16 @@ class user extends database{
                 ". $this->table ."
             SET
                 name = :name, 
-                email = :email" 
+                email = :email,
+                password = :password" 
                
                 ;
 
         $stmt = $this->connect()->prepare($sqlQuery);
         $stmt->bindParam(":name", $this->name);
         $stmt->bindParam(":email", $this->email);
+        $stmt->bindParam(":password", $this->password);
+
  
 
         if($stmt->execute()){
@@ -42,8 +45,58 @@ class user extends database{
         }
         return false;
     }
+public function check_email(){
+    $sqlQuery = "SELECT * from ".$this->table." WHERE email = :email";
 
+    $stmt = $this->connect()->prepare($sqlQuery);
     
+  
+    $stmt->bindParam(":email", $this->email);
+
+
+    $stmt->execute();
+    return $stmt;
+
+}
+    
+
+
+public function check_login(){
+    $sqlQuery = "SELECT * from ".$this->table." WHERE email = :email AND password = :password";
+
+    $stmt = $this->connect()->prepare($sqlQuery);
+    
+  
+    $stmt->bindParam(":email", $this->email);
+    $stmt->bindParam(":password", $this->password);
+
+
+
+    $stmt->execute();
+    $count = $stmt->rowCount();
+      
+    if ($count > 0) {
+        
+        return true;
+    } else {
+        
+        
+        return false;
+    }
+
+    return $stmt;
+
+}
+
+
+
+
+
+
+
+
+
+
 
     public function update(){
         $sqlQuery = "UPDATE

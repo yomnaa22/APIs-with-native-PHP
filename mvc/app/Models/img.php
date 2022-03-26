@@ -1,5 +1,6 @@
 
 <?php
+
 class img extends database{
     private $table = "images";
     private $conn;
